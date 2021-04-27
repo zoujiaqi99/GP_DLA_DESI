@@ -1,7 +1,7 @@
 % build_catalogs: loads existing QSO and DLA catalogs, applies some
 % initial filters, and creates a list of spectra to download from SDSS
-%
 % ZWARNING: ensure we exclude those spectra with bad redshift status reported
+% Modification: delete 'sdss_names',‘in_dr9','in_dr10'; set 'bal_visual_flags','zwarning' to zero array; change dimension of 'los_inds','dla_inds','z_dlas','log_nhis'  
 
 % load QSO catalogs
 release='Y1';
@@ -115,7 +115,3 @@ save(sprintf('%s/catalog', processed_directory(release)), ...
 %end
 %fclose(fid);
 
-for i in 1:numel(all_flux)
-    all_flux{i}=all_flux{i}(:);
-    all_wavelengths{i}=all_wavelengths{i}(:);
-    all_noise_variance{i}=all_noise_variance{i}(:);
