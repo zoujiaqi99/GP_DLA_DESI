@@ -1,5 +1,6 @@
 % set_parameters: sets various parameters for the DLA detection
-% pipeline
+% modification: base_directory, num_lines=1 (only use lyman alpha lines)
+
 
 % physical constants
 lya_wavelength = 1215.6701;                   % Lyman alpha transition wavelength  Å
