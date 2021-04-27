@@ -1,4 +1,4 @@
-                                                                                                                                         % process_qsos_multiple_dlas_meanflux: run DLA detection algorithm on specified objects
+% process_qsos_multiple_dlas_meanflux: run DLA detection algorithm on specified objects
 % while using lower lognhi range (defined in set_lls_parameters.m) as an alternative model; 
 % Note: model_posterior(quasar_ind, :) ... 
 % = [p(no dla | D), p(lls | D), p(1 dla | D), p(2 dla | D), ...]
@@ -27,6 +27,7 @@
 % 
 % March 8, 2019: add additional Occam's razor factor between DLA models and null model:
 %   P(DLAs | D) := P(DLAs | D) / num_dla_samples
+% Modification: change 'prior_ind'; without 'all_pixel_mask'; no limit to overlap DLAs
 
 training_release = 'Y1';
 training_set_name = 'Y1';
