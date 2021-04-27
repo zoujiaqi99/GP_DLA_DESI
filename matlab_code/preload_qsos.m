@@ -1,7 +1,7 @@
 % preload_qsos: loads spectra from SDSS FITS files, applies further
 % filters, and applies some basic preprocessing such as normalization
 % and truncation to the region of interest
-
+% Modification: matching ids in catalog.mat and sightlines.mat
 % load QSO catalog
 release='Y1';
 variables_to_load = {'z_qsos', 'target_ids', 'filter_flags'};
