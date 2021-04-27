@@ -1,3 +1,5 @@
+#using python to do preprocessing
+#The order of this output is not the same as in catalog.mat and needs to be matched using preload_qsos.mat
 import numpy as np
 from dla_cnn.desi.DesiMock import DesiMock
 import scipy.io as scio
@@ -56,13 +58,6 @@ def make_mat(k):
     #p=multiprocessing.Process(target=make_mat,args=(int(k),))
     #p.start()
     #print(k)
-datafile1='desiY1-0.2-DLA/%s-sightlines.mat'%(6)
-data=scio.loadmat(datafile1)
-sightline_ids=data['sightline_ids']
-wavelengths=data['wavelengths']
-flux=data['flux']
-noise_variance=data['noise_variance']
-normalizers=data['normalizers']
 for k in ['20', '18', '12', '16', '5', '30', '23', '11', '2', '13', '19', '0', '14', '7', '22', '3', '10', '9', '4', '17']:
     datafile2='desiY1-0.2-DLA/%s-sightlines.mat'%(k)
     data2 = scio.loadmat(datafile2)
