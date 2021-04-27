@@ -35,7 +35,7 @@ def make_mat(k):
             this_wavelength=10**sightline.loglam
             rest_wavelength=this_wavelength/(1+sightline.z_qso)
             ind = (rest_wavelength >= normalization_min_lambda) & (rest_wavelength <= normalization_max_lambda)
-            norm=np.median(sightline.flux[ind])
+            norm=np.nanmedian(sightline.flux[ind])
             ind = (rest_wavelength >= min_lambda) & (rest_wavelength<= max_lambda)
             if len(np.nonzero(ind)[0])>=min_num_pixels:
                 sightline_ids.append(sightline.id)
