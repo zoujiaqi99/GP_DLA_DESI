@@ -4,7 +4,7 @@
 %
 %   lift     mean-flux mu in the learning script via median(   y .* exp( + optical_depth ) ),
 %   suppress mean-flux mu in the processing script via mu' := mu .* exp( - optical_depth );
-
+% Modification: change train_ind,using 100000 spectra without DLAs; do not take pixel_mask into account
 rng('default');
 training_release  = 'Y1';
 training_set_name='Y1';
@@ -18,7 +18,6 @@ load(sprintf('%s/preloaded_qsos', processed_directory(training_release)), ...
      variables_to_load{:});
 
 % determine which spectra to use for training; allow string value for
-% 筛选出前70255条nodla sightline作为训练集
 train_ind=[(catalog.dla_inds==0)&(catalog.filter_flags==0)];
 x=find(train_ind);
 a=x(100000)
