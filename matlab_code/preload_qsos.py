@@ -40,13 +40,13 @@ def make_mat(k):
             if len(np.nonzero(ind)[0])>=min_num_pixels:
                 sightline_ids.append(sightline.id)
                 flux=sightline.flux/norm
-                ivar=sightline.error**(-2)/norm**2
+                var=sightline.error**(-2)/norm**2
                 ind = (rest_wavelength >= loading_min_lambda) & (rest_wavelength <= loading_max_lambda)
                 ind[max(0,np.nonzero(ind)[0][0]-1)]=True
                 ind[min(np.nonzero(ind)[0][-1]+1,len(np.nonzero(ind)[0]-1))]=True
                 all_wavelengths.append(list(this_wavelength[ind]))
                 all_flux.append(list(flux[ind]))
-                all_noise_variance.append(list(ivar[ind]))
+                all_noise_variance.append(list(var[ind]))
                 all_normalizers.append(norm)
         print(j)
     dataNew = 'desiY1-0.2-DLA/%s-sightlines.mat'%(k)
