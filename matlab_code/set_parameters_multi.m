@@ -1,5 +1,5 @@
 % set_parameters: sets various parameters for the DLA detection
-% modification: base_directory, num_lines=1 (only use lyman alpha lines)
+% modification: base_directory, num_lines=1 (only use lyman alpha lines),z_qso_cut=2.33
 
 
 % physical constants
@@ -23,7 +23,7 @@ loading_min_lambda = 910;                     % range of rest wavelengths to loa
 loading_max_lambda = 1217;
 
 % preprocessing parameters
-z_qso_cut      = 2.15;                        % filter out QSOs with z less than this threshold
+z_qso_cut      = 2.33;                        % filter out QSOs with z less than this threshold
 min_num_pixels = 200;                         % minimum number of non-masked pixels
 
 % normalization parameters
@@ -146,7 +146,7 @@ lya_oscillator_strength = 0.416400;
 lyb_oscillator_strength = 0.079120;
 
 % base directory for all data
-base_directory = '/home/zjqi/gp_dla_detection/desimock/data';
+base_directory = '/home/zjqi/gp_dla_detection/SV/data';
 
 % utility functions for identifying various directories
 distfiles_directory = @(release) ...
