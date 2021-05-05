@@ -41,25 +41,30 @@ for i in idlist:
                 sightlines.append(sightline)
 for sightline in sightlines:
     this_wavelength=10**sightline.loglam
+    this_pixel_mask=sightline.pixel_mask
     rest_wavelength=this_wavelength/(1+sightline.z_qso)
-    ind = (rest_wavelength >= normalization_min_lambda) & (rest_wavelength <= normalization_max_lambda)
-    norm=np.nanmedian(sightline.flux[ind])
-    ind = (rest_wavelength >= min_lambda) & (rest_wavelength<= max_lambda)
-    if len(np.nonzero(ind)[0])>=min_num_pixels:
-        sightline_ids.append(sightline.id)
-        flux=sightline.flux/norm
-        var=sightline.error**2/norm**2
-        ind = (rest_wavelength >= loading_min_lambda) & (rest_wavelength <= loading_max_lambda)
-        ind[max(0,np.nonzero(ind)[0][0]-1)]=True
-        ind[min(np.nonzero(ind)[0][-1]+1,len(np.nonzero(ind)[0]-1))]=True
-        all_wavelengths.append(list(this_wavelength[ind]))
-        all_flux.append(list(flux[ind]))
-        all_noise_variance.append(list(var[ind]))
-        all_normalizers.append(norm)
-    else:
+    ind = (rest_wavelength >= normalization_min_lambda) & (rest_wavelength <= normalization_max_lambda)&(~this_pixel_mask)
+    norm=np.abs(np.nanmedian(sightline.flux[np.nonzero(ind)[0]]))
+    if np.isnan(norm):
         print(sightline.id)
+    else:
+        ind = (rest_wavelength >= min_lambda) & (rest_wavelength<= max_lambda)&(~this_pixel_mask)
+        if len(np.nonzero(ind)[0])>=min_num_pixels:
+            sightline_ids.append(sightline.id)
+            flux=sightline.flux/norm
+            var=sightline.error**2/norm**2
+            ind = (rest_wavelength >= loading_min_lambda) & (rest_wavelength <= loading_max_lambda)
+            ind[max(0,np.nonzero(ind)[0][0]-1)]=True
+            ind[min(np.nonzero(ind)[0][-1]+1,len(np.nonzero(ind)[0]-1))]=True
+            all_wavelengths.append(list(this_wavelength[ind]))
+            all_flux.append(list(flux[ind]))
+            all_noise_variance.append(list(var[ind]))
+            all_normalizers.append(norm)
+            all_pixel_mask.append(list(this_pixel_mask[ind]))
+        else:
+            print(sightline.id)
    
    
 dataNew = 'zoujq/cascades/sightlines/preload_qsos.mat'
-scio.savemat(dataNew, {'loading_min_lambda': loading_min_lambda,'loading_max_lambda': loading_max_lambda,'normalization_min_lambda':normalization_min_lambda,'normalization_max_lambda':normalization_max_lambda,'min_num_pixels':min_num_pixels,'sightline_ids':sightline_ids, 'all_wavelengths':all_wavelengths,'all_flux':all_flux,'all_noise_variance':all_noise_variance,'all_normalizers':all_normalizers})
+scio.savemat(dataNew, {'loading_min_lambda': loading_min_lambda,'loading_max_lambda': loading_max_lambda,'normalization_min_lambda':normalization_min_lambda,'normalization_max_lambda':normalization_max_lambda,'min_num_pixels':min_num_pixels,'sightline_ids':sightline_ids, 'all_wavelengths':all_wavelengths,'all_flux':all_flux,'all_noise_variance':all_noise_variance,'all_pixel_mask':all_pixel_mask,'all_normalizers':all_normalizers})
 
