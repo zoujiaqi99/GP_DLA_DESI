@@ -1,5 +1,6 @@
 #using python to build catalogs
 import numpy as np
+import scipy.io as scio
 from astropy.table import Table, vstack
 
 idlist=[80605, 80607, 80609, 80620, 80622, 80669, 80673, 80674, 80675, 80676, 80677,  80678, 80679, 80680, 80681, 80682, 
