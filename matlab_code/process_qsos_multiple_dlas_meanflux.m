@@ -79,7 +79,7 @@ load(sprintf('/home/zjqi/gp_dla_detection/desimock/data/Y1/processed/learned_qso
 
 % load DLA samples from training release
 variables_to_load = {'offset_samples', 'log_nhi_samples', 'nhi_samples'};
-load(sprintf('%s/dla_samples_a03', processed_directory(release)), ...
+load('/home/zjqi/gp_dla_detection/desimock/data/Y1/processed/dla_samples_a03.mat', ...
      variables_to_load{:});
 
 % load redshifts from catalog to process
