@@ -27,13 +27,13 @@
 % 
 % March 8, 2019: add additional Occam's razor factor between DLA models and null model:
 %   P(DLAs | D) := P(DLAs | D) / num_dla_samples
-% Modification: change 'prior_ind'; without 'all_pixel_mask'; no limit to overlap DLAs
+% Modification: using model trained by DESI MOCK; using MOCK catlog to calculate prior; add 'pixel_mask'; no limit to overlap DLAs
 
 training_release = 'Y1';
 training_set_name = 'Y1';
-prior_ind = '(catalog.filter_flags==0)';
-release='Y1';
-test_set_name='Y1';
+prior_ind = '(prior_catalog.filter_flags==0)';
+release='cascades';
+test_set_name='cascades';
 test_ind='(catalog.filter_flags==0)';
 % multi-dlas parameters
 max_dlas = 4;
@@ -46,7 +46,7 @@ prev_beta  = 3.65;
 
 % load redshifts/DLA flags from training release
 prior_catalog = ...
-    load(sprintf('%s/catalog', processed_directory(training_release)));
+    load('/home/zjqi/gp_dla_detection/desimock/data/Y1/processed/catalog');
 
 if (ischar(prior_ind))
   prior_ind = eval(prior_ind);
@@ -73,21 +73,20 @@ prior = rmfield(prior, 'z_dlas');
 % load QSO model from training release
 variables_to_load = {'rest_wavelengths', 'mu', 'M', 'log_omega', ...
                      'log_c_0', 'log_tau_0', 'log_beta'};
-load(sprintf('%s/learned_qso_model_lyseries_variance_kim_%s',             ...
-             processed_directory(training_release), ...
+load(sprintf('/home/zjqi/gp_dla_detection/desimock/data/Y1/processed/learned_qso_model_lyseries_variance_kim_%s',             ...
              training_set_name),                    ...
      variables_to_load{:});
 
 % load DLA samples from training release
 variables_to_load = {'offset_samples', 'log_nhi_samples', 'nhi_samples'};
-load(sprintf('%s/dla_samples_a03', processed_directory(training_release)), ...
+load(sprintf('%s/dla_samples_a03', processed_directory(release)), ...
      variables_to_load{:});
 
 % load redshifts from catalog to process
 catalog = load(sprintf('%s/catalog', processed_directory(release)));
 
 % load preprocessed QSOs
-variables_to_load = {'all_wavelengths', 'all_flux', 'all_noise_variance'};
+variables_to_load = {'all_wavelengths', 'all_flux', 'all_noise_variance','all_pixel_mask'};
 load(sprintf('%s/preloaded_qsos', processed_directory(release)), ...
      variables_to_load{:});
 
@@ -99,6 +98,7 @@ end
 all_wavelengths    =    all_wavelengths(test_ind);
 all_flux           =           all_flux(test_ind);
 all_noise_variance = all_noise_variance(test_ind);
+all_pixel_mask     =     all_pixel_mask(test_ind);
 
 z_qsos = catalog.z_qsos(test_ind);
 
@@ -159,7 +159,7 @@ for quasar_ind = 1:num_quasars
   this_wavelengths    =    all_wavelengths{quasar_ind}(:);
   this_flux           =           all_flux{quasar_ind}(:);
   this_noise_variance = all_noise_variance{quasar_ind}(:);
-  %this_pixel_mask     =     all_pixel_mask{quasar_ind};
+  this_pixel_mask     =     all_pixel_mask{quasar_ind}(:);
 
   % convert to QSO rest frame
   this_rest_wavelengths = emitted_wavelengths(this_wavelengths, z_qso);
@@ -171,7 +171,7 @@ for quasar_ind = 1:num_quasars
   % computation
   this_unmasked_wavelengths = this_wavelengths(unmasked_ind);
 
-  ind = unmasked_ind; %& (~this_pixel_mask);
+  ind = unmasked_ind & (~this_pixel_mask);
 
   this_wavelengths      =      this_wavelengths(ind);
   this_rest_wavelengths = this_rest_wavelengths(ind);
@@ -338,7 +338,7 @@ for quasar_ind = 1:num_quasars
   % to retain only unmasked pixels from computed absorption profile
   % this has to be done by using the unmasked_ind which has not yet
   % been applied this_pixel_mask.
-  %mask_ind = unmasked_ind;
+  mask_ind = (~this_pixel_mask(unmasked_ind));
 
   for num_dlas = 1:max_dlas
     % compute probabilities under DLA model for each of the sampled
@@ -356,7 +356,7 @@ for quasar_ind = 1:num_quasars
                   nhi_samples(k), num_lines);
       end
 
-      %absorption = absorption(mask_ind);
+      absorption = absorption(mask_ind);
 
       dla_mu     = this_mu     .* absorption;
       dla_M      = this_M      .* absorption;
@@ -373,7 +373,7 @@ for quasar_ind = 1:num_quasars
         absorption = voigt(padded_wavelengths, sample_z_dlas(i), ...
           lls_nhi_samples(i), num_lines);
 
-        %absorption = absorption(mask_ind);
+        absorption = absorption(mask_ind);
 
         lls_mu     = this_mu     .* absorption;
         lls_M      = this_M      .* absorption;
