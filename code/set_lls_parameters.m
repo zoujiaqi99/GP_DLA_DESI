@@ -1,6 +1,6 @@
 % set_lls_parameters: generates lls parameter and pdf
 % load training catalog
-catalog = load('/home/zjqi/gp_dla_detection/desimock/data/Y1/processed/catalog');
+catalog = load('.../data/catalog'); %download catalog from google drive
 % set the prior parameters
 % LLS model parameters: parameter samples
 alpha               = 0.97;                    % weight of KDE component in mixture
