@@ -31,15 +31,15 @@
 %load directory:
 % load redshifts/DLA flags from training release
 prior_catalog = ...
-    load('/home/zjqi/gp_dla_detection/desimock/data/Y1/processed/catalog');
+    load('.../data/catalog');
 % load QSO model from training release
 variables_to_load = {'rest_wavelengths', 'mu', 'M', 'log_omega', ...
                      'log_c_0', 'log_tau_0', 'log_beta'};
-load('/home/zjqi/gp_dla_detection/desimock/data/Y1/processed/learned_qso_model_lyseries_variance_kim_Y1_v2',variables_to_load{:});
+load('.../data/learned_qso_model_lyseries_variance_kim_Y1_v2',variables_to_load{:});
 
 % load DLA samples from training release
 variables_to_load = {'offset_samples', 'log_nhi_samples', 'nhi_samples'};
-load('/home/zjqi/gp_dla_detection/desimock/data/Y1/processed/dla_samples_a03',variables_to_load{:});
+load('.../data/dla_samples_a03',variables_to_load{:});
 
 % load redshifts from catalog to process
 catalog = load(catalog_path);
