@@ -1,31 +1,21 @@
-#!/bin/bash -l
+#!/bin/bash
+#SBATCH --job-name=gp_minibatch         # Job name
+#SBATCH --output=gp_minibatch_%j.out    # Output file (%j will be replaced by the job ID)
+#SBATCH --error=gp_minibatch_%j.err     # Error file (%j will be replaced by the job ID)
+#SBATCH --ntasks=32                     # Number of tasks (MATLAB is single-threaded unless using parallel toolbox)
+#SBATCH --mem=128G                      # Memory per node (adjust as necessary)
+#SBATCH --time=24:00:00                 # Time limit hrs:min:sec
+#SBATCH --partition=compute             # Partition name (adjust to your cluster partition)
+#SBATCH --mail-type=END,FAIL            # Send email on job completion or failure
+#SBATCH --mail-user=mfho@umich.edu      # Email address for notifications
+#SBATCH --array=0-100%20                # Array for running 100 jobs, 20 jobs at a time
 
-sbatch <<EOT
-#!/bin/bash -l
-#SBATCH --nodes=1
-#SBATCH --ntasks=32
-#SBATCH --mem=128gb
-#SBATCH --job-name="gp_$1-$2_$3"
-#SBATCH --time=02:00:00
-#SBATCH -p short
-#SBATCH --output=gp_$1-$2_$3.out
-#SBATCH --mail-user=mho026@ucr.edu
-#SBATCH --mail-type=ALL
-
-date
-
-cd $SLURM_SUBMIT_DIR
-
-echo "----"
-
-# loading matlab module
+# Load MATLAB module if needed
 module load matlab
 
-# run matlab script
-matlab -nodesktop -nosplash -r "qso_start_ind = $1; qso_end_ind = $2; num_quasars = $3; offset = $4; parpool('local', 32); run_process_full_int; exit;;"
+# Define the number of quasars and offset for each batch
+NUM_QUASARS=1000
+QSOS_NUM_OFFSET=$(($SLURM_ARRAY_TASK_ID * $NUM_QUASARS))
 
-echo "----"
-
-hostname
-
-EOT
+# Run MATLAB script
+matlab -nodisplay -nosplash -r "num_quasars=$NUM_QUASARS; qsos_num_offset=$QSOS_NUM_OFFSET; script_for_gp_minibatch; exit"

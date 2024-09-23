@@ -103,7 +103,8 @@ all_noise_variance = noise_variance(test_ind);
 
 z_qsos = catalog.z_qsos(test_ind);
 
-num_quasars = numel(z_qsos);
+% [mini batch] the number of quasars to process, set in the submission script
+% num_quasars = numel(z_qsos);
 
 % preprocess model interpolants
 mu_interpolator = ...
@@ -149,17 +150,23 @@ for quasar_ind = 1:num_quasars
   tic;
   rng('default');  % random number should be set for each qso run
 
+  % [mini batch] offset for the quasar index:
+  % qsos_num_offset : the offset of the quasar index
+  % quasar_ind_offset: the quasar index in the "whole catalog"
+  % quasar_ind: the quasar index in the "mini batch"
+  quasar_ind_offset = quasar_ind + qsos_num_offset;
+
   % initialize an empty array for this sample log likelihood
   this_sample_log_likelihoods_dla = nan(num_dla_samples, max_dlas);
 
-  z_qso = z_qsos(quasar_ind);
+  z_qso = z_qsos(quasar_ind_offset);
 
   fprintf('processing quasar %i/%i (z_QSO = %0.4f) ...', ...
-        quasar_ind, num_quasars, z_qso);
+        quasar_ind_offset, num_quasars + qsos_num_offset, z_qso);
 
-  this_wavelengths    =    all_wavelengths{quasar_ind}(:);
-  this_flux           =           all_flux{quasar_ind}(:);
-  this_noise_variance = all_noise_variance{quasar_ind}(:);
+  this_wavelengths    =    all_wavelengths{quasar_ind_offset}(:);
+  this_flux           =           all_flux{quasar_ind_offset}(:);
+  this_noise_variance = all_noise_variance{quasar_ind_offset}(:);
   %this_pixel_mask     =     all_pixel_mask{quasar_ind}(:);
 
   % convert to QSO rest frame
